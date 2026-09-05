@@ -13,7 +13,6 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Cargamos Google Fonts solo como fallback en caso de que la imagen falle -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
@@ -106,10 +105,9 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            padding: 10px; /* Padding interno para que el logo no toque los bordes */
+            padding: 15px 10px; /* Padding para que el logo respire */
         }
 
-        /* Micro-interacciones visuales */
         @media (hover: hover) {
             .brand-button:hover {
                 background-color: var(--card-bg-hover);
@@ -124,21 +122,22 @@
             border-color: rgba(255, 255, 255, 0.4);
         }
 
+        /* --- AQUÍ ESTÁ LA MAGIA PARA LOS LOGOS --- */
         .brand-logo-img {
-            max-width: 80%;
-            max-height: 40px; /* Altura máxima controlada para armonía en el tótem */
-            object-fit: contain;
-            pointer-events: none; /* Evita arrastrar la imagen por error en móviles */
+            max-width: 80%;       /* Nunca será más ancho que el botón */
+            max-height: 45px;      /* Altura estándar controlada */
+            object-fit: contain;   /* Mantiene la proporción sin deformar */
+            pointer-events: none;
+            
+            /* ESTE ES EL FILTRO QUE VUELVE TODO BLANCO BRILLANTE */
+            filter: brightness(0) invert(1); 
         }
 
-        /* Ajustes de escala específicos según la morfología de cada logo */
-        .logo-bajorelieve { max-height: 60px; } /* Al ser circular/cuadrado necesita más altura */
-        .logo-monte { max-height: 35px; }
-        .logo-alsada { max-height: 48px; }
-        .logo-poshlamps { max-height: 38px; }
-        .logo-thor { max-height: 32px; }
+        /* Ajustes finos para logos específicos si lo necesitan */
+        .logo-bajorelieve { max-height: 55px; } /* Es circular, puede ser más alto */
+        .logo-monte { max-height: 25px; }       /* Es muy ancho, mejor que no sea tan alto */
 
-        /* Estilos para el texto de respaldo (cuando la imagen no carga) */
+        /* Estilos para el texto de respaldo (si la imagen falla) */
         .fallback-text {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
@@ -146,7 +145,7 @@
             text-transform: uppercase;
         }
 
-        /* Animaciones Keyframes */
+        /* Animaciones */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -165,17 +164,12 @@
             <h1 class="header-subtitle">Marcas que hacen<br>posible grandes ideas.</h1>
         </header>
 
-        <!-- Contenedor donde se inyectan las marcas dinámicamente -->
+        <!-- Contenedor inyectado por JS -->
         <ul class="brands-list" id="brands-container">
-            <!-- Renderizado por JS -->
         </ul>
     </main>
 
     <script>
-        /**
-         * 1. CONFIGURACIÓN DE MARCAS
-         * Asegúrate de tener los 5 archivos .png (o .svg) dentro de tu carpeta 'assets' en GitHub.
-         */
         const BRANDS = [
             {
                 id: 'bajo-relieve',
@@ -190,7 +184,7 @@
                 name: 'Monte',
                 handle: 'montestone.co',
                 url: 'https://www.instagram.com/montestone.co?igsi=N280eDVkZmxmMmdu',
-                imgSrc: './assets/monte.png',
+                imgSrc: './assets/monte.png', 
                 imgClass: 'logo-monte'
             },
             {
@@ -198,7 +192,7 @@
                 name: 'Alsada',
                 handle: 'alsadaoficial',
                 url: 'https://www.instagram.com/alsadaoficial?igsi=MXgzOXR1MmdyMnZibA==',
-                imgSrc: './assets/alsada.png',
+                imgSrc: './assets/alsada.png', 
                 imgClass: 'logo-alsada'
             },
             {
@@ -206,7 +200,7 @@
                 name: 'Posh Lamps',
                 handle: 'poshlamp',
                 url: 'https://www.instagram.com/poshlamp?igsi=MXE0Ynh4eWtvemR4dA==',
-                imgSrc: './assets/posh-lamps.png',
+                imgSrc: './assets/posh-lamps.png', 
                 imgClass: 'logo-poshlamps'
             },
             {
@@ -214,28 +208,22 @@
                 name: 'THOR',
                 handle: 'thorkitchen.co',
                 url: 'https://www.instagram.com/thorkitchen.co?igsi=cDRxdTNjbzdoa3Ny',
-                imgSrc: './assets/thor.png',
+                imgSrc: './assets/thor.png', 
                 imgClass: 'logo-thor'
             }
         ];
 
-        
-        /**
-         * 2. LÓGICA DE DEEP LINKING (Abre la app de Instagram en el celular)
-         */
         function handleBrandClick(event, handle, webUrl) {
             event.preventDefault();
             
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             const isMobile = /iPad|iPhone|iPod|Android/.test(userAgent) && !window.MSStream;
             
-            if (navigator.vibrate) navigator.vibrate(40); // Vibración sutil en Android
+            if (navigator.vibrate) navigator.vibrate(40);
 
             if (isMobile) {
-                // Intenta abrir la aplicación nativa
                 const appUri = `instagram://user?username=${handle}`;
                 
-                // Si la app no abre en 1.5 segundos, manda al usuario a la página web
                 const now = Date.now();
                 const fallbackTimer = setTimeout(() => {
                     if (Date.now() - now < 2000) {
@@ -246,15 +234,10 @@
                 window.onblur = () => clearTimeout(fallbackTimer);
                 window.location.href = appUri;
             } else {
-                // Si está en un computador, abre la web en otra pestaña
                 window.open(webUrl, '_blank');
             }
         }
 
-
-        /**
-         * 3. RENDERIZADO DEL TÓTEM (Construye los botones en la pantalla)
-         */
         function renderTotem() {
             const container = document.getElementById('brands-container');
             const fragment = document.createDocumentFragment();
@@ -271,16 +254,13 @@
                 
                 a.addEventListener('click', (e) => handleBrandClick(e, brand.handle, brand.url));
 
-                // Imagen del Logo
                 const img = document.createElement('img');
                 img.src = brand.imgSrc;
                 img.alt = `Logo de ${brand.name}`;
                 img.className = `brand-logo-img ${brand.imgClass}`;
                 
-                // Fallback de seguridad: Si te falta subir alguna imagen a la carpeta 'assets' en GitHub,
-                // esto evitará que la página se rompa y en su lugar pondrá el nombre de la marca en texto.
                 img.onerror = function() {
-                    this.onerror = null; // Previene loop infinito
+                    this.onerror = null;
                     const fallbackText = document.createElement('span');
                     fallbackText.className = 'fallback-text';
                     fallbackText.textContent = brand.name;
@@ -295,7 +275,6 @@
             container.appendChild(fragment);
         }
 
-        // Ejecutar cuando cargue la página
         document.addEventListener('DOMContentLoaded', renderTotem);
     </script>
 </body>
