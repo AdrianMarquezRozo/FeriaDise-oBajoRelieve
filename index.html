@@ -23,7 +23,7 @@
             --text-muted: #a1a1aa;
             
             /* Interacciones */
-            --card-border: rgba(255, 255, 255, 0.1);
+            --card-border: rgba(255, 255, 255, 0.08);
             --card-bg-hover: rgba(255, 255, 255, 0.04);
             --card-bg-active: rgba(255, 255, 255, 0.08);
             
@@ -57,7 +57,7 @@
             display: flex;
             flex-direction: column;
             gap: 48px;
-            margin-top: 4vh; /* Centrado vertical óptico */
+            margin-top: 4vh;
         }
 
         .header {
@@ -105,7 +105,7 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            padding: 15px 10px; /* Padding para que el logo respire */
+            padding: 15px 10px;
         }
 
         @media (hover: hover) {
@@ -122,27 +122,29 @@
             border-color: rgba(255, 255, 255, 0.4);
         }
 
-        /* --- AQUÍ ESTÁ LA MAGIA PARA LOS LOGOS --- */
+        /* --- LA MAGIA DE LOS LOGOS ESTÁ AQUÍ --- */
         .brand-logo-img {
             max-width: 80%;       /* Nunca será más ancho que el botón */
-            max-height: 45px;      /* Altura estándar controlada */
-            object-fit: contain;   /* Mantiene la proporción sin deformar */
+            max-height: 45px;     /* Altura estándar controlada */
+            object-fit: contain;  /* Mantiene la proporción sin deformar */
             pointer-events: none;
             
-            /* ESTE ES EL FILTRO QUE VUELVE TODO BLANCO BRILLANTE */
+            /* ESTE ES EL FILTRO QUE VUELVE LO NEGRO A BLANCO BRILLANTE */
             filter: brightness(0) invert(1); 
         }
 
-        /* Ajustes finos para logos específicos si lo necesitan */
-        .logo-bajorelieve { max-height: 55px; } /* Es circular, puede ser más alto */
-        .logo-monte { max-height: 25px; }       /* Es muy ancho, mejor que no sea tan alto */
+        /* Ajustes finos para logos específicos */
+        /* ¡Aumenté el tamaño de Bajo Relieve para que el círculo destaque! */
+        .logo-bajorelieve { max-height: 65px; } 
+        .logo-monte { max-height: 25px; }       
 
-        /* Estilos para el texto de respaldo (si la imagen falla) */
+        /* Estilos para el texto de respaldo (el sistema de emergencia) */
         .fallback-text {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
             letter-spacing: 2px;
             text-transform: uppercase;
+            font-size: 0.9rem;
         }
 
         /* Animaciones */
@@ -170,6 +172,8 @@
     </main>
 
     <script>
+        // === CONFIGURACIÓN DE MARCAS ===
+        // ¡REVISA QUE LOS NOMBRES AQUÍ COINCIDAN EXACTAMENTE CON LOS DE GITHUB!
         const BRANDS = [
             {
                 id: 'bajo-relieve',
@@ -259,6 +263,7 @@
                 img.alt = `Logo de ${brand.name}`;
                 img.className = `brand-logo-img ${brand.imgClass}`;
                 
+                // Sistema de emergencia: si la foto no existe, pone el nombre
                 img.onerror = function() {
                     this.onerror = null;
                     const fallbackText = document.createElement('span');
