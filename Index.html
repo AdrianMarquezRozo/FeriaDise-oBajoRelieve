@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <!-- Viewport estricto para evitar zoom involuntario en móviles y mantener escala 1:1 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#050505">
+    <title>Brand Hub | Selecciona un Destino</title>
+    
+    <!-- OpenGraph Meta Tags para previsualización enriquecida (si se comparte el link) -->
+    <meta property="og:title" content="Brand Hub">
+    <meta property="og:description" content="Selecciona tu marca y visita nuestro Instagram oficial.">
+    <meta property="og:type" content="website">
+
+    <!-- Preconexión a Google Fonts para optimizar la carga tipográfica -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Paleta Base - Dark Luxury */
+            --bg-base: #050505;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            
+            /* Glassmorphism Variables */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover: rgba(255, 255, 255, 0.06);
+            --glass-blur: 16px;
+
+            /* Sombras y elevaciones */
+            --shadow-subtle: 0 4px 24px -1px rgba(0, 0, 0, 0.5);
+            
+            /* Animaciones */
+            --transition-bounce: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --transition-smooth: 0.2s ease-in-out;
+        }
+
+        /* Reset y configuración base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Elimina flash azul en iOS */
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            /* Prevención de overscroll en móviles */
+            overscroll-behavior-y: none; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Gradientes de fondo ambientales (Malla sutil) */
+        .ambient-light {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            top: -200px;
+            left: -200px;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .ambient-light-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, rgba(0, 0, 0, 0) 70%);
+            bottom: -150px;
+            right: -150px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Contenedor Principal App */
+        .app-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px; /* Optimizado para proporciones móviles */
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Cabecera */
+        .header {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            animation: fadeDown 0.6s ease-out forwards;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Contenedor de Tarjetas */
+        .brands-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Tarjetas Glassmorphism */
+        .brand-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--glass-blur));
+            -webkit-backdrop-filter: blur(var(--glass-blur));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: transform var(--transition-bounce), background var(--transition-smooth), border var(--transition-smooth);
+            box-shadow: var(--shadow-subtle);
+            text-decoration: none;
+            color: inherit;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 0.5s ease-out forwards;
+        }
+
+        /* Micro-interacciones (Desktop Hover & Mobile Touch/Active) */
+        @media (hover: hover) {
+            .brand-card:hover {
+                background: var(--glass-hover);
+                transform: translateY(-4px) scale(1.02);
+            }
+        }
+        .brand-card:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Icono de Marca */
+        .brand-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            /* El color de fondo se inyecta vía JS basado en la configuración */
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.2);
+        }
+
+        /* Información de la Marca */
+        .brand-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .brand-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .brand-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Icono de Acción (Chevron/Link) */
+        .action-icon {
+            color: var(--text-secondary);
+            transition: color var(--transition-smooth), transform var(--transition-bounce);
+        }
+        
+        .brand-card:hover .action-icon {
+            color: var(--text-primary);
+            transform: translateX(4px);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 16px;
+            opacity: 0.5;
+        }
+
+        /* Keyframes para orquestación de carga visual */
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Luces ambientales (Decoración CSS) -->
+    <div class="ambient-light"></div>
+    <div class="ambient-light-2"></div>
+
+    <main class="app-container">
+        <header class="header">
+            <h1>Bienvenido</h1>
+            <p>Selecciona una experiencia para continuar</p>
+        </header>
+
+        <!-- El contenedor donde JS inyectará dinámicamente las marcas -->
+        <div class="brands-grid" id="brands-container">
+            <!-- Las tarjetas se generan aquí -->
+        </div>
+
+        <footer class="footer">
+            <p>Powered by Smart Hub Ecosystem</p>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * ARQUITECTURA DE CONFIGURACIÓN DE MARCAS
+         * Desacoplamos los datos de la UI. Para actualizar, añadir o modificar marcas,
+         * únicamente se edita este array (Data-Driven Layout).
+         */
+        const BRANDS_CONFIG = [
+            {
+                id: 'brand-alpha',
+                name: 'Zénith Rooftop',
+                handle: 'instagram', // Usando instagram para test, cambiar por el handle real sin el '@'
+                color: 'linear-gradient(135deg, #f59e0b, #d97706)', // Amber Luxury
+                icon: '🍸',
+                category: 'Mixology & Lounge'
+            },
+            {
+                id: 'brand-beta',
+                name: 'Kōri Sushi',
+                handle: 'instagram',
+                color: 'linear-gradient(135deg, #ef4444, #b91c1c)', // Crimson Red
+                icon: '🍣',
+                category: 'Omakase Experience'
+            },
+            {
+                id: 'brand-gamma',
+                name: 'Oasis Wellness',
+                handle: 'instagram',
+                color: 'linear-gradient(135deg, #10b981, #047857)', // Emerald Green
+                icon: '🌿',
+                category: 'Spa & Relax'
+            },
+            {
+                id: 'brand-delta',
+                name: 'Aura Boutique',
+                handle: 'instagram',
+                color: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', // Royal Purple
+                icon: '✨',
+                category: 'High-end Fashion'
+            }
+        ];
+
+        /**
+         * MOTOR DE DEEP LINKING (App vs Web Fallback)
+         * Detecta el SO. Intenta abrir el URI scheme nativo. 
+         * Si el OS no reacciona abriendo la app, el setTimeout dispara la versión web.
+         * @param {string} handle - El usuario de Instagram (sin el @)
+         */
+        function handleDeepLink(handle) {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+            const isAndroid = /android/i.test(userAgent);
+            
+            const appUri = `instagram://user?username=${handle}`;
+            const webUri = `https://www.instagram.com/${handle}/`;
+
+            // Proveer feedback háptico si el dispositivo lo soporta
+            if (navigator.vibrate) {
+                navigator.vibrate(50); // Vibración corta
+            }
+
+            if (isIOS || isAndroid) {
+                const now = Date.now();
+                
+                // Fallback Timer: Si después de 1500ms la app no ha robado el foco, asume que no está instalada.
+                const fallbackTimer = setTimeout(() => {
+                    // Verificamos si la página sigue activa antes de redirigir a web
+                    if (Date.now() - now < 2000) {
+                        window.location.href = webUri;
+                    }
+                }, 1500);
+
+                // En eventos blur (cuando la app nativa se abre), limpiamos el timer
+                window.onblur = function() {
+                    clearTimeout(fallbackTimer);
+                };
+
+                // Disparo del URI nativo
+                window.location.href = appUri;
+            } else {
+                // En Desktop, directamente abrir en nueva pestaña web
+                window.open(webUri, '_blank');
+            }
+        }
+
+        /**
+         * RENDERIZADO DINÁMICO
+         * Construye el DOM basado en BRANDS_CONFIG garantizando cero redundancia de HTML.
+         */
+        function renderUI() {
+            const container = document.getElementById('brands-container');
+            
+            BRANDS_CONFIG.forEach((brand, index) => {
+                // Generar elemento botón semántico
+                const card = document.createElement('a');
+                card.className = 'brand-card';
+                card.style.animationDelay = `${index * 0.1}s`; // Staggered animation
+                
+                // Evitar comportamiento default del anchor para usar nuestro JS
+                card.href = "#";
+                card.onclick = (e) => {
+                    e.preventDefault();
+                    handleDeepLink(brand.handle);
+                };
+
+                // Maquetado interno
+                card.innerHTML = `
+                    <div class="brand-icon" style="background: ${brand.color};">
+                        ${brand.icon}
+                    </div>
+                    <div class="brand-info">
+                        <span class="brand-name">${brand.name}</span>
+                        <span class="brand-desc">${brand.category} &middot; @${brand.handle}</span>
+                    </div>
+                    <svg class="action-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Inicializar aplicación al cargar el script
+        document.addEventListener('DOMContentLoaded', renderUI);
+
+    </script>
+</body>
+</html>
